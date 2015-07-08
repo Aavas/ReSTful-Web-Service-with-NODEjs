@@ -12,11 +12,30 @@ var bookRouter = express.Router();
 
 bookRouter.route('/books')
     .get(function(req,res){
-        Book.find(function(err, data){
+
+        var query = {};
+
+        if(req.query.genre){
+            query.genre = req.query.genre;
+        }
+        if(req.query.author){
+            query.author = req.query.author;
+        }
+
+        Book.find(query, function(err, data){
             if(err)
-                console.log(err);
+                res.status(500).send(err);
             else
                 res.json(data);
+        })
+    });
+bookRouter.route('/books/:bookID')
+    .get(function(req,res){
+        Book.findById(req.params.bookID, function(err, book){
+            if(err)
+                res.status(500).send(err);
+            else
+                res.json(book);
         })
     });
 
